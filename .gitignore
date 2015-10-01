@@ -1,6 +1,7 @@
 *.pdf
 *.exe
 *.o
+*.out
 *.odt
 *.sh
 *.bat
