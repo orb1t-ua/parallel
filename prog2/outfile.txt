@@ -1,0 +1,50 @@
+Num threads:  1 Matrix size:      1000 Microseconds taken:           36405
+
+Num threads:  1 Matrix size:      2000 Microseconds taken:          162737
+
+Num threads:  1 Matrix size:      4000 Microseconds taken:          641954
+
+Num threads:  1 Matrix size:      6000 Microseconds taken:         1499596
+
+Num threads:  1 Matrix size:      8000 Microseconds taken:         2785073
+
+Num threads:  2 Matrix size:      1000 Microseconds taken:           31595
+
+Num threads:  2 Matrix size:      2000 Microseconds taken:          129896
+
+Num threads:  2 Matrix size:      4000 Microseconds taken:          535130
+
+Num threads:  2 Matrix size:      6000 Microseconds taken:         1230481
+
+Num threads:  2 Matrix size:      8000 Microseconds taken:         2242457
+
+Num threads:  4 Matrix size:      1000 Microseconds taken:           29178
+
+Num threads:  4 Matrix size:      2000 Microseconds taken:          118230
+
+Num threads:  4 Matrix size:      4000 Microseconds taken:          478823
+
+Num threads:  4 Matrix size:      6000 Microseconds taken:         1089858
+
+Num threads:  4 Matrix size:      8000 Microseconds taken:         1968046
+
+Num threads:  8 Matrix size:      1000 Microseconds taken:           29082
+
+Num threads:  8 Matrix size:      2000 Microseconds taken:          116763
+
+Num threads:  8 Matrix size:      4000 Microseconds taken:          474141
+
+Num threads:  8 Matrix size:      6000 Microseconds taken:         1065713
+
+Num threads:  8 Matrix size:      8000 Microseconds taken:         1912495
+
+Num threads: 16 Matrix size:      1000 Microseconds taken:           28693
+
+Num threads: 16 Matrix size:      2000 Microseconds taken:          114908
+
+Num threads: 16 Matrix size:      4000 Microseconds taken:          459444
+
+Num threads: 16 Matrix size:      6000 Microseconds taken:         1041332
+
+Num threads: 16 Matrix size:      8000 Microseconds taken:         1849680
+

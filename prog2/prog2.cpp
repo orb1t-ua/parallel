@@ -11,7 +11,9 @@
 
 long num_threads;
 long N;
-double* A, B, C;
+double* mat_a;
+double* mat_b;
+double* mat_c;
 
 void* mat_mul(void* rank);
 void mat_mul_rc(double* colA, double* rowB, double* rcC);
@@ -28,18 +30,18 @@ int main(int argc, char* argv[]){
 	pthread_t* thread_handles;
 	num_threads = atol(argv[1]);
 	N = atol(argv[2]);
-	A = (double*)malloc(sizeof(double) * N * N);
-	B = (double*)malloc(sizeof(double) * N * N);
-	C = (double*)malloc(sizeof(double) * N * N);
+	mat_a = new double[N*N];
+	mat_b = new double[N*N];
+	mat_c = new double[N*N];
 	thread_handles = (pthread_t*)malloc(num_threads * sizeof(pthread_t));
 	
 	srand(time(NULL));
 	// two loops for better cache locality thru A and B
-	for(long i = 0; i < N*N; i++){
-		*(A + i) = (double)rand();
+	for(size_t i = 0; i < N*N; i++){
+		mat_a[i] = (double)(rand() / RAND_MAX);
 	}
-	for(long i = 0; i < N*N; i++){
-		*(B + i) = (double)rand();
+	for(size_t i = 0; i < N*N; i++){
+		mat_b[i] = (double)(rand() / RAND_MAX);
 	}
 	
 	for(thread = 0; thread < num_threads; thread++){
@@ -51,7 +53,7 @@ int main(int argc, char* argv[]){
 		pthread_join(thread_handles[thread], NULL);
 	}
 	free(thread_handles);
-	free(A); free(B); free(C);
+	delete[] mat_a; delete[] mat_b; delete[] mat_c;
 	
 	auto end = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::microseconds>(end - begin);
@@ -66,10 +68,10 @@ void* mat_mul(void* rank){
 	long my_start = my_rank * my_n;
 	long my_end = my_start + my_n;
 	
-	for(long i = my_start; i < my_end; i++){
-		long row = i / N;
-		long col = i % N;
-		mat_mul_rc(A + row, B + col, C + i);
+	for(size_t i = my_start; i < my_end; i++){
+		size_t row = i / N;
+		size_t col = i % N;
+		mat_mul_rc(mat_a + row, mat_b + col, mat_c + i);
 	}
 
 	return NULL;
@@ -77,7 +79,7 @@ void* mat_mul(void* rank){
 
 void mat_mul_rc(double* a, double* b, double* c){
 	double val = 0.0;
-	for(long i = 0; i < N; i++){
+	for(size_t i = 0; i < N; i++){
 		val += *(a + i) * *(b + N*i);
 	}
 	*c = val;
