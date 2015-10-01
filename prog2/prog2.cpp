@@ -11,7 +11,7 @@
 
 long num_threads;
 long N;
-double* A, B, C;
+double *A, *B, *C;
 
 void* mat_mul(void* rank);
 void mat_mul_rc(double* colA, double* rowB, double* rcC);
