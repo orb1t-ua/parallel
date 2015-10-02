@@ -64,7 +64,7 @@ int main(int argc, char* argv[]){
 
 void* mat_mul(void* rank){
 	long my_rank = (long) rank;
-	long my_n = N / num_threads;
+	long my_n = N*N / num_threads;
 	long my_start = my_rank * my_n;
 	long my_end = my_start + my_n;
 	
