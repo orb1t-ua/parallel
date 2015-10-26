@@ -1,10 +1,6 @@
 #ifndef LIFE_MATRIX_H
 #define LIFE_MATRIX_H
 
-struct Offset{
-	int i, bit;
-};
-
 class LifeMatrix{
 	bool* data = nullptr;
 	int width, height;
