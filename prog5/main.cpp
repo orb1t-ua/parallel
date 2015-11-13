@@ -21,9 +21,12 @@ int main(int argc, char* argv[]){
 	const int X = atoi(argv[1]);
 	const int Y = atoi(argv[2]);
 	const int G = atoi(argv[3]);
-	const int localY = Y / P;
+	int localY = Y / P;
 	const int yStart = localY * R;
 	const int yEnd   = (R == P-1) ? Y : yStart + localY;
+	localY = (R == P-1) ? yEnd - yStart : localY;
+	
+	cout << "Rank " << R << " starts at y= " << yStart << " ends at: " << yEnd << " and completes " << localY << " items\n";
 	
 	LifeMatrix lm[2];
 	if(0 == R){
@@ -34,11 +37,13 @@ int main(int argc, char* argv[]){
 		lm[1].alloc(X, Y);
 	}
 	lm[2].alloc(X, Y);
-	cout << "Rank " << R << " starts at y= " << yStart << " and ends at: " << yEnd << endl;
+	
+	
 	MPI_Barrier(MPI_COMM_WORLD);
 	if(0 == R){
 		cout << "Barrier completed" << endl;
 	}
+	
 	MPI_Bcast(lm[0](0, 0), X*Y, MPI_C_BOOL, 0, MPI_COMM_WORLD);
 	if(0 == R){
 		cout << "Broadcast completed" << endl;
@@ -51,14 +56,15 @@ int main(int argc, char* argv[]){
 		// game of life
 		for(int y = yStart; y < yEnd; y++){
 			for(int x = 0; x < X; x++){
-				*lm[k](x, y) = lm[j].shouldLive(*lm[j](x, y), lm[j].getNumNeighbors(x, y));
+				*lm[k](x, y) = alive(*lm[j](x, y), lm[j].nbors(x, y));
 			}
 		}
 		cout << "Rank " << R << " finished simulation on G " << i << endl;
 		// interprocess communication
 		if(0 == R){
 			for(int r = 1; r < P; r++){
-				MPI_Recv(lm[k](0, localY*r), localY, MPI_C_BOOL, r, 0, MPI_COMM_WORLD, NULL);
+				const int foreign_len = (r == P-1) ? Y - localY*r : localY;
+				MPI_Recv(lm[k](0, localY*r), foreign_len, MPI_C_BOOL, r, 0, MPI_COMM_WORLD, NULL);
 				cout << "Recv'd from " << r << endl;
 			}
 		}

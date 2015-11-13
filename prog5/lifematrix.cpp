@@ -43,7 +43,7 @@ void LifeMatrix::wrap(int& x, int& y){
 	}
 }
 
-int LifeMatrix::getNumNeighbors(int x, int y){
+int LifeMatrix::nbors(int x, int y){
 	int i = 0;
 	for(int j = y-1; j < y+1; j++){
 		for(int k = x-1; k < x+1; k++){
@@ -53,6 +53,3 @@ int LifeMatrix::getNumNeighbors(int x, int y){
 	return i - 1;
 }
 
-bool LifeMatrix::shouldLive(bool alive, int neighbors){
-	return (neighbors == 3) || (alive && neighbors == 2);
-}

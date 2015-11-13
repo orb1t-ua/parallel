@@ -10,8 +10,9 @@ public:
 	void alloc(int w, int h);
 	void destroy();
 	inline bool* operator()(const int x, const int y){int j = x; int k = y; wrap(j, k); return (data + j + k*width);}
-	int getNumNeighbors(int x, int y);
-	bool shouldLive(bool alive, int neighbors);
+	int nbors(int x, int y);
 };
+
+inline bool alive(bool state, int n) {return (n == 3) || (state && n == 2);};
 
 #endif
