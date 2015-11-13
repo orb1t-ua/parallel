@@ -6,6 +6,12 @@
 
 #include "lifematrix.h"
 
+#ifdef DEBUG
+#define D(x) x
+#else
+#define D(x) 
+#endif
+
 using namespace std;
 
 int main(int argc, char* argv[]){
@@ -26,11 +32,11 @@ int main(int argc, char* argv[]){
 	const int yEnd   = (R == P-1) ? Y : yStart + localY;
 	localY = (R == P-1) ? yEnd - yStart : localY;
 	
-	cout << "Rank " << R << " starts at y= " << yStart << " ends at: " << yEnd << " and completes " << localY << " items\n";
+	D(cout << "Rank " << R << " starts at y= " << yStart << " ends at: " << yEnd << " and completes " << localY << " items\n";)
 	
 	LifeMatrix lm[2];
 	if(0 == R){
-		cout << "M: " << X << " N: " << Y << " G: " << G << endl;
+		D(cout << "M: " << X << " N: " << Y << " G: " << G << endl;)
 		lm[1].init(X, Y);
 	}
 	else{
@@ -40,14 +46,18 @@ int main(int argc, char* argv[]){
 	
 	
 	MPI_Barrier(MPI_COMM_WORLD);
-	if(0 == R){
-		cout << "Barrier completed" << endl;
-	}
+	D(
+		if(0 == R){
+			D(cout << "Barrier completed" << endl;)
+		}
+	)
 	
 	MPI_Bcast(lm[0](0, 0), X*Y, MPI_C_BOOL, 0, MPI_COMM_WORLD);
-	if(0 == R){
-		cout << "Broadcast completed" << endl;
-	}
+	D(
+		if(0 == R){
+			cout << "Broadcast completed" << endl;
+		}
+	)
 	
 	for(int i = 0; i < G; i++){
 		// double buffer indices
@@ -59,24 +69,27 @@ int main(int argc, char* argv[]){
 				*lm[k](x, y) = alive(*lm[j](x, y), lm[j].nbors(x, y));
 			}
 		}
-		cout << "Rank " << R << " finished simulation on G " << i << endl;
+		D(cout << "Rank " << R << " finished simulation on G " << i << endl;)
 		// interprocess communication
 		if(0 == R){
-			for(int r = 1; r < P; r++){
-				const int foreign_len = (r == P-1) ? Y - localY*r : localY;
-				MPI_Recv(lm[k](0, localY*r), foreign_len, MPI_C_BOOL, r, 0, MPI_COMM_WORLD, NULL);
-				cout << "Recv'd from " << r << endl;
+			for(int r = 1; r < P-1; r++){
+				MPI_Recv(lm[k](0, localY*r), localY, MPI_C_BOOL, r, 0, MPI_COMM_WORLD, NULL);
+				D(cout << "Recv'd from " << r << endl;)
 			}
+			MPI_Recv(lm[k](0, localY*(P-1)), Y-localY*(P-1), MPI_C_BOOL, P-1, 0, MPI_COMM_WORLD, NULL);
+			D(cout << "Recv'd from " << P-1 << endl;)
 		}
 		else {
 			MPI_Send(lm[k](0, yStart), localY, MPI_C_BOOL, 0, 0, MPI_COMM_WORLD);
-			cout << "Sent from " << R << " to 0\n";
+			D(cout << "Sent from " << R << " to 0\n";)
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
 		MPI_Bcast(lm[k](0, 0), X*Y, MPI_C_BOOL, 0, MPI_COMM_WORLD);
-		if(0 == R){
-			cout << "G " << i << " finished\n";
-		}
+		D(
+			if(0 == R){
+				cout << "G " << i << " finished\n";
+			}
+		)
 	}
 	
 	lm[0].destroy();

@@ -7,7 +7,7 @@ N=10
 G=3
  
 INC_DIRS = 
-CXXFLAGS = $(INC_DIRS) -std=c++11 -Wfatal-errors -Wall -O3
+CXXFLAGS = $(INC_DIRS) -std=c++11 -Wfatal-errors -Wall
 LDFLAGS = 
 LDLIBS = 
  
@@ -20,6 +20,12 @@ OBJ_FILES = $(CPP_FILES:.cpp=.o)
 .PHONY: clean all run debug release
  
 all:	$(EXE)
+
+debug:	CXXFLAGS += -DDEBUG -g
+debug:	$(EXE)
+
+release:	CXXFLAGS += -O3
+release:	$(EXE)
 
 run:	$(EXE)
 	mpiexec -n $(P) $(EXE) $(M) $(N) $(G)
