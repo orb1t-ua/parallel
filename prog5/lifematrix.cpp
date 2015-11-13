@@ -29,18 +29,8 @@ void LifeMatrix::destroy(){
 }
 
 void LifeMatrix::wrap(int& x, int& y){
-	while(x < 0){
-		x += width;
-	}
-	while(x >= width){
-		x -= width;
-	}
-	while(y < 0){
-		y += height;
-	}
-	while(y >= height){
-		y -= height;
-	}
+    x = (x+width)%width;
+    y = (y+height)%height;
 }
 
 int LifeMatrix::nbors(int x, int y){
