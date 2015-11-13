@@ -52,7 +52,7 @@ int main(int argc, char* argv[]){
 		}
 	)
 	
-	MPI_Bcast(lm[0](0, 0), X*Y, MPI_C_BOOL, 0, MPI_COMM_WORLD);
+	MPI_Bcast(lm[0](0, 0), X*Y, MPI_BYTE, 0, MPI_COMM_WORLD);
 	D(
 		if(0 == R){
 			cout << "Broadcast completed" << endl;
@@ -73,18 +73,18 @@ int main(int argc, char* argv[]){
 		// interprocess communication
 		if(0 == R){
 			for(int r = 1; r < P-1; r++){
-				MPI_Recv(lm[k](0, localY*r), localY, MPI_C_BOOL, r, 0, MPI_COMM_WORLD, NULL);
+				MPI_Recv(lm[k](0, localY*r), localY, MPI_BYTE, r, 0, MPI_COMM_WORLD, NULL);
 				D(cout << "Recv'd from " << r << endl;)
 			}
-			MPI_Recv(lm[k](0, localY*(P-1)), Y-localY*(P-1), MPI_C_BOOL, P-1, 0, MPI_COMM_WORLD, NULL);
+			MPI_Recv(lm[k](0, localY*(P-1)), Y-localY*(P-1), MPI_BYTE, P-1, 0, MPI_COMM_WORLD, NULL);
 			D(cout << "Recv'd from " << P-1 << endl;)
 		}
 		else {
-			MPI_Send(lm[k](0, yStart), localY, MPI_C_BOOL, 0, 0, MPI_COMM_WORLD);
+			MPI_Send(lm[k](0, yStart), localY, MPI_BYTE, 0, 0, MPI_COMM_WORLD);
 			D(cout << "Sent from " << R << " to 0\n";)
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
-		MPI_Bcast(lm[k](0, 0), X*Y, MPI_C_BOOL, 0, MPI_COMM_WORLD);
+		MPI_Bcast(lm[k](0, 0), X*Y, MPI_BYTE, 0, MPI_COMM_WORLD);
 		D(
 			if(0 == R){
 				cout << "G " << i << " finished\n";
