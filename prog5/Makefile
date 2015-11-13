@@ -31,7 +31,7 @@ run:	$(EXE)
 	mpiexec -n $(P) $(EXE) $(M) $(N) $(G)
 	
 clean:	
-	rm *.o *.out
+	rm *.o $(EXE)
 
 $(EXE):		$(OBJ_FILES)
 	$(LINK) $(EXE) $(OBJ_FILES) $(LDFLAGS) $(LDLIBS) 
