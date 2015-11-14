@@ -63,12 +63,12 @@ int main(int argc, char* argv[]){
 #define GATHER \
 	if(0==R){ \
 		for(int r=1; r<P-1; r++){	\
-			MPI_Recv(lm[k](0, localY*r), localY, MPI_BYTE, r, 0, MPI_COMM_WORLD, NULL);\
+			MPI_Recv(lm[k](0, localY*r), X*localY, MPI_BYTE, r, 0, MPI_COMM_WORLD, NULL);\
 		}	\
-		MPI_Recv(lm[k](0, localY*(P-1)), Y - (localY*(P-1)), MPI_BYTE, P-1, 0, MPI_COMM_WORLD, NULL);	\
+		MPI_Recv(lm[k](0, localY*(P-1)), X*(Y - (localY*(P-1))), MPI_BYTE, P-1, 0, MPI_COMM_WORLD, NULL);	\
 	}	\
 	else {	\
-		MPI_Send(lm[k](0, 1), localY, MPI_BYTE, 0, 0, MPI_COMM_WORLD);	\
+		MPI_Send(lm[k](0, 1), X*localY, MPI_BYTE, 0, 0, MPI_COMM_WORLD);	\
 	}	
 	
 	for(int i = 0; i < G; i++){
