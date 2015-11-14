@@ -22,7 +22,7 @@ int main(int argc, char* argv[]){
 	MPI_Comm_rank(MPI_COMM_WORLD, &R);
 	if(argc != 4){
 		if(0==R)
-			cout << "Usage: ./progname <M> <N> <generations>\n";
+			cout << "Usage: mpiexec -n <P> " << argv[0] << " <M> <N> <generations>\n";
 		return 1;
 	}
 	const int X = atoi(argv[1]);
