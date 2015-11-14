@@ -8,7 +8,9 @@ public:
 	void init(int w, int h);
 	void alloc(int w, int h);
 	void destroy();
-	inline bool* operator()(const int x, const int y){int j=(x+width)%width; int k=(y+height)%height; return (data+j+k*width);}
+	inline bool* operator()(const int x, const int y){
+		return (data+((x+width)%width)+((y+height)%height)*width);
+	}
 	int nbors(int x, int y);
 };
 
