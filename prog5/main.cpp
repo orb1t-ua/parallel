@@ -37,27 +37,19 @@ int main(int argc, char* argv[]){
 	LifeMatrix lm[2];
 	if(0 == R){
 		D(cout << "M: " << X << " N: " << Y << " G: " << G << endl;)
-		lm[1].init(X, Y);
+		lm[0].init(X, Y);
 	}
 	else{
-		lm[1].alloc(X, Y);
+		lm[0].alloc(X, Y);
 	}
-	lm[2].alloc(X, Y);
+	lm[1].alloc(X, Y);
 	
 	
 	MPI_Barrier(MPI_COMM_WORLD);
-	D(
-		if(0 == R){
-			D(cout << "Barrier completed" << endl;)
-		}
-	)
+	D(if(0 == R)cout << "Barrier completed" << endl;)
 	
 	MPI_Bcast(lm[0](0, 0), X*Y, MPI_BYTE, 0, MPI_COMM_WORLD);
-	D(
-		if(0 == R){
-			cout << "Broadcast completed" << endl;
-		}
-	)
+	D(if(0 == R)cout << "Broadcast completed" << endl;)
 	
 	for(int i = 0; i < G; i++){
 		// double buffer indices
@@ -85,11 +77,7 @@ int main(int argc, char* argv[]){
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
 		MPI_Bcast(lm[k](0, 0), X*Y, MPI_BYTE, 0, MPI_COMM_WORLD);
-		D(
-			if(0 == R){
-				cout << "G " << i << " finished\n";
-			}
-		)
+		D(if(0 == R)cout << "G " << i << " finished\n";)
 	}
 	
 	lm[0].destroy();
