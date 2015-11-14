@@ -2,9 +2,9 @@ CXX = mpic++
 EXE = p5.out
 
 P=4
-M=10
-N=10
-G=3
+M=10000
+N=10000
+G=100
  
 INC_DIRS = 
 CXXFLAGS = $(INC_DIRS) -std=c++11 -Wfatal-errors -Wall

@@ -33,52 +33,56 @@ int main(int argc, char* argv[]){
 	const int yEnd   = (R == P-1) ? Y : yStart + localY;
 	localY = (R == P-1) ? yEnd - yStart : localY;
 	
-	D(cout << "Rank " << R << " starts at y= " << yStart << " ends at: " << yEnd << " and completes " << localY << " items\n";)
-	
 	LifeMatrix lm[2];
 	if(0 == R){
-		D(cout << "M: " << X << " N: " << Y << " G: " << G << endl;)
 		lm[0].init(X, Y);
+		lm[1].alloc(X, Y);
 	}
 	else{
-		lm[0].alloc(X, Y);
+		lm[0].alloc(X, localY+2);
+		lm[1].alloc(X, localY+2);
 	}
-	lm[1].alloc(X, Y);
 	
-	
-	MPI_Barrier(MPI_COMM_WORLD);
-	D(if(0 == R)cout << "Barrier completed" << endl;)
-	
-	MPI_Bcast(lm[0](0, 0), X*Y, MPI_BYTE, 0, MPI_COMM_WORLD);
-	D(if(0 == R)cout << "Broadcast completed" << endl;)
+#define BCAST \
+	if(0==R){	\
+		for(int r=1; r<P-1; r++){	\
+			MPI_Send(lm[0](0, r*localY - 1), (localY+2)*X, MPI_BYTE, r, 0, MPI_COMM_WORLD);	\
+		}	\
+		MPI_Send(lm[0](0, (P-1)*localY - 1), (localY+1)*X, MPI_BYTE, P-1, 0, MPI_COMM_WORLD);	\
+		MPI_Send(lm[0](0, 0), X, MPI_BYTE, P-1, 0, MPI_COMM_WORLD);	\
+	}	\
+	else {	\
+		if(R != (P-1))	\
+			MPI_Recv(lm[0](0, 0), X*(localY+2), MPI_BYTE, 0, 0, MPI_COMM_WORLD, NULL);	\
+		else {	\
+			MPI_Recv(lm[0](0, 0), X*(localY+1), MPI_BYTE, 0, 0, MPI_COMM_WORLD, NULL);	\
+			MPI_Recv(lm[0](0, localY+1), X, MPI_BYTE, 0, 0, MPI_COMM_WORLD, NULL);	\
+		}	\
+	}
+
+#define GATHER \
+	if(0==R){ \
+		for(int r=1; r<P-1; r++){	\
+			MPI_Recv(lm[k](0, localY*r), localY, MPI_BYTE, r, 0, MPI_COMM_WORLD, NULL);\
+		}	\
+		MPI_Recv(lm[k](0, localY*(P-1)), Y - (localY*(P-1)), MPI_BYTE, P-1, 0, MPI_COMM_WORLD, NULL);	\
+	}	\
+	else {	\
+		MPI_Send(lm[k](0, 1), localY, MPI_BYTE, 0, 0, MPI_COMM_WORLD);	\
+	}	
 	
 	for(int i = 0; i < G; i++){
 		// double buffer indices
 		const int j = (i) % 2;
 		const int k = (i+1) % 2;
+		BCAST
 		// game of life
 		for(int y = yStart; y < yEnd; y++){
 			for(int x = 0; x < X; x++){
 				*lm[k](x, y) = alive(*lm[j](x, y), lm[j].nbors(x, y));
 			}
 		}
-		D(cout << "Rank " << R << " finished simulation on G " << i << endl;)
-		// interprocess communication
-		if(0 == R){
-			for(int r = 1; r < P-1; r++){
-				MPI_Recv(lm[k](0, localY*r), localY, MPI_BYTE, r, 0, MPI_COMM_WORLD, NULL);
-				D(cout << "Recv'd from " << r << endl;)
-			}
-			MPI_Recv(lm[k](0, localY*(P-1)), Y-localY*(P-1), MPI_BYTE, P-1, 0, MPI_COMM_WORLD, NULL);
-			D(cout << "Recv'd from " << P-1 << endl;)
-		}
-		else {
-			MPI_Send(lm[k](0, yStart), localY, MPI_BYTE, 0, 0, MPI_COMM_WORLD);
-			D(cout << "Sent from " << R << " to 0\n";)
-		}
-		MPI_Barrier(MPI_COMM_WORLD);
-		MPI_Bcast(lm[k](0, 0), X*Y, MPI_BYTE, 0, MPI_COMM_WORLD);
-		D(if(0 == R)cout << "G " << i << " finished\n";)
+		GATHER
 	}
 	
 	lm[0].destroy();

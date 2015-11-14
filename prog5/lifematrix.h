@@ -13,7 +13,6 @@ public:
 	int nbors(int x, int y);
 };
 
-
 inline bool alive(bool state, int n) {return (n == 3) || (state && n == 2);};
 
 #endif
