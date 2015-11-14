@@ -26,14 +26,14 @@ void LifeMatrix::destroy(){
 }
 
 int LifeMatrix::nbors(int x, int y){
-	int i = *(*this)(x-1, y-1) ? 1 : 0;
-	i += *(*this)(x, y-1) ? 1 : 0;
-	i += *(*this)(x+1, y-1) ? 1 : 0;
-	i += *(*this)(x-1, y) ? 1 : 0;
-	i += *(*this)(x+1, y) ? 1 : 0;
-	i += *(*this)(x-1, y+1) ? 1 : 0;
-	i += *(*this)(x, y+1) ? 1 : 0;
-	i += *(*this)(x+1, y+1) ? 1 : 0;
+	int i = (int)*(*this)(x-1, y-1);
+	i += (int)*(*this)(x, y-1);
+	i += (int)*(*this)(x+1, y-1);
+	i += (int)*(*this)(x-1, y);
+	i += (int)*(*this)(x+1, y);
+	i += (int)*(*this)(x-1, y+1);
+	i += (int)*(*this)(x, y+1);
+	i += (int)*(*this)(x+1, y+1);
 	return i;
 }
 
