@@ -5,8 +5,13 @@
 #	<machine0's ip>		node0
 #	<machine1's ip> 	node1
 #	..
-#3. ssh into each node then exit
-#4. copy your program into each node with the same file structure as the root machine
-#5. mpirun -n <P> -H node0,node1.. p5.out <M> <N> <G>
-#6. enter password
-#7. wait for results, open top on each node if youre bored, enjoy
+#3. install openssh
+#4. edit /etc/ssh/sshd_config like so:
+# AllowUsers node0 node1
+# PermitRootLogin no
+#5 start its daemon: sudo systemctl start sshd
+#6. ssh into each node then exit
+#7. copy your program into each node with the same file structure as the root machine
+#8. mpirun -n <P> -H node0,node1.. p5.out <M> <N> <G>
+#9. enter password
+#10. wait for results, open top on each node if youre bored, enjoy
