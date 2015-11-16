@@ -1,5 +1,10 @@
 CXX = g++
 EXE = p4.out
+
+P=8
+M=10000
+N=10000
+G=20
  
 INC_DIRS = 
 CXXFLAGS = $(INC_DIRS) -std=c++11 -Wfatal-errors -Wall
@@ -26,11 +31,11 @@ parallel: CXXFLAGS += -O3 -fopenmp -DOMP_PARALLEL
 parallel: LDLIBS += -fopenmp
 parallel: $(EXE)
 
-export: CXXFLAGS += -DEXPORT
-export: $(EXE)
+clean: 
+	rm *.o $(EXE)
 
 run:	$(EXE)
-	./$(EXE)
+	./$(EXE) $(P) $(M) $(N) $(G)
 
 $(EXE):		$(OBJ_FILES)
 	$(LINK) $(EXE) $(OBJ_FILES) $(LDFLAGS) $(LDLIBS) 
