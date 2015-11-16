@@ -1,0 +1,8 @@
+mpirun -n 16 -H node0,node1 p5.out 10000 10000 20
+P:  16 M:     10000 N:     10000 G:        20 seconds:              25
+mpirun -n 16 -H node0,node1 p5.out 10000 10000 20
+P:  16 M:     10000 N:     10000 G:        20 seconds:              31
+mpirun -n 16 -H node0,node1 p5.out 10000 10000 20
+P:  16 M:     10000 N:     10000 G:        20 seconds:              36
+mpirun -n 16 -H node0,node1 p5.out 10000 10000 20
+P:  16 M:     10000 N:     10000 G:        20 seconds:              36
