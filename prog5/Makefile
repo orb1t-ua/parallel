@@ -28,7 +28,7 @@ release:	CXXFLAGS += -O3
 release:	$(EXE)
 
 run:	$(EXE)
-	mpiexec -n $(P) $(EXE) $(M) $(N) $(G)
+	mpirun -n $(P) -H node0,node1 $(EXE) $(M) $(N) $(G)
 	
 clean:	
 	rm *.o $(EXE)

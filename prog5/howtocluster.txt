@@ -1,0 +1,12 @@
+#instructions for making a home cluster:
+#0. install openmpi on each machine: yaourt -S openmpi
+#1. static ip your machines on the lan
+#2. add ips to your /etc/hosts file like so:
+#	<machine0's ip>		node0
+#	<machine1's ip> 	node1
+#	..
+#3. ssh into each node then exit
+#4. copy your program into each node with the same file structure as the root machine
+#5. mpirun -n <P> -H node0,node1.. p5.out <M> <N> <G>
+#6. enter password
+#7. wait for results, open top on each node if youre bored, enjoy
