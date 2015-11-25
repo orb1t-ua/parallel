@@ -9,6 +9,9 @@
 
 using namespace std;
 
+#define PRINTLINEMACRO {	\
+	printf("%d in %s\n", __LINE__, __FILE__); \
+}
 
 __global__ void gpu_mat_mul(float *A, float* B, float* C, long N)
 {
@@ -29,7 +32,9 @@ int main(int argc, char **argv){
 		printf("usage: ./%s <Size> \n", argv[0]);
 		return 1;
 	}
+	
     cudaSetDevice(0);
+    
    	long size = atol(argv[1]);
    	long N = size*size;
    	size_t bytes = sizeof(float) * N;
@@ -51,14 +56,10 @@ int main(int argc, char **argv){
 	free(B_h);
 	free(A_h);
 	
-	int blockSize;   // The launch configurator returned block size 
-	int minGridSize; // The minimum grid size needed to achieve the 
-		             // maximum occupancy for a full device launch 
-	int gridSize;    // The actual grid size needed, based on input size 
-	cudaOccupancyMaxPotentialBlockSize( &minGridSize, &blockSize, gpu_mat_mul, 0, N);
-	// Round up according to array size 
-	gridSize = (N + blockSize - 1) / blockSize;
-	gpu_mat_mul <<< gridSize, blockSize >>> (A_d, B_d, C_d, N);
+	long threadsPerBlock = 32;
+	long numBlocks = (N % threadsPerBlock == 0) ? N/threadsPerBlock : (N/threadsPerBlock)+1;
+	
+	gpu_mat_mul <<< numBlocks, threadsPerBlock >>> (A_d, B_d, C_d, N);
 	
 	cudaMemcpy(C_h, C_d, bytes, cudaMemcpyDeviceToHost);
 	
@@ -67,10 +68,10 @@ int main(int argc, char **argv){
 	cudaFree(A_d);
 	
 	free(C_h);
-
+	
 	auto end = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::milliseconds>(end - begin);
-	cout << "Number of threads: " << setw(2) << blockSize * gridSize << " Matrix size: " << setw(9) << N;
-	cout << " Microseconds taken: " << setw(15) << duration.count() << endl;
+	cout << "Number of threads: " << setw(2) << threadsPerBlock * numBlocks << " Matrix size: " << setw(9) << size;
+	cout << " Milliseconds taken: " << setw(15) << duration.count() << endl;
 	return 0;
 }
