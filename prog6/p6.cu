@@ -34,12 +34,11 @@ int main(int argc, char **argv){
 		return 1;
 	}
 	
-    cudaSetDevice(0);
+	cudaSetDevice(0);
     
    	long size = atol(argv[1]);
    	long N = size*size;
    	size_t bytes = sizeof(float) * N;
-   	printf("%i\n", bytes);
    	
    	float* A_h = (float*)malloc(bytes);
    	float* B_h = (float*)malloc(bytes);
