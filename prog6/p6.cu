@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iostream>
 #include <iomanip>
+#include <climits>
 
 using namespace std;
 
@@ -38,23 +39,24 @@ int main(int argc, char **argv){
    	long size = atol(argv[1]);
    	long N = size*size;
    	size_t bytes = sizeof(float) * N;
+   	printf("%i\n", bytes);
    	
    	float* A_h = (float*)malloc(bytes);
    	float* B_h = (float*)malloc(bytes);
    	float* C_h = (float*)malloc(bytes);
+   	
+   	memset(A_h, 1.0, bytes);
+   	memset(B_h, 1.0, bytes);
    	
 	float *A_d, *B_d, *C_d;
 	cudaMalloc((void**)&A_d, bytes);
 	cudaMalloc((void**)&B_d, bytes);
 	cudaMalloc((void**)&C_d, bytes);
 	
-	memset(A_h, 1.0, bytes);
-	memset(B_h, 1.0, bytes);
-	
 	cudaMemcpy(A_d, A_h, bytes, cudaMemcpyHostToDevice);
 	cudaMemcpy(B_d, B_h, bytes, cudaMemcpyHostToDevice);
-	free(B_h);
 	free(A_h);
+	free(B_h);
 	
 	long threadsPerBlock = 32;
 	long numBlocks = (N % threadsPerBlock == 0) ? N/threadsPerBlock : (N/threadsPerBlock)+1;
