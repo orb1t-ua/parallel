@@ -33,8 +33,6 @@ int main(int argc, char **argv){
 		printf("usage: ./%s <Size> \n", argv[0]);
 		return 1;
 	}
-	
-	cudaSetDevice(0);
     
    	long size = atol(argv[1]);
    	long N = size*size;
@@ -62,6 +60,8 @@ int main(int argc, char **argv){
 	
 	gpu_mat_mul <<< numBlocks, threadsPerBlock >>> (A_d, B_d, C_d, N);
 	
+	cudaDeviceSynchronize();
+
 	cudaMemcpy(C_h, C_d, bytes, cudaMemcpyDeviceToHost);
 	
 	cudaFree(C_d);
