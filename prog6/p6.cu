@@ -14,7 +14,7 @@ using namespace std;
 	printf("%d in %s\n", __LINE__, __FILE__); \
 }
 
-__global__ void gpu_mat_mul(float *A, float* B, float* C, long N)
+__global__ void gpu_mat_mul(float* A, float* B, float* C, long N)
 {
   long i = blockIdx.x * blockDim.x + threadIdx.x;
   if(i >= N) return;
@@ -50,24 +50,40 @@ int main(int argc, char **argv){
 	cudaMalloc((void**)&B_d, bytes);
 	cudaMalloc((void**)&C_d, bytes);
 	
+	cudaError_t err = cudaGetLastError();
+	if (err != cudaSuccess) 
+		printf("Error: %s\n", cudaGetErrorString(err));
+	PRINTLINEMACRO
 	cudaMemcpy(A_d, A_h, bytes, cudaMemcpyHostToDevice);
 	cudaMemcpy(B_d, B_h, bytes, cudaMemcpyHostToDevice);
+	
+	err = cudaGetLastError();
+	if (err != cudaSuccess) 
+		printf("Error: %s\n", cudaGetErrorString(err));
+	PRINTLINEMACRO
 	free(A_h);
 	free(B_h);
 	
-	long threadsPerBlock = 32;
+	long threadsPerBlock = 16;
 	long numBlocks = (N % threadsPerBlock == 0) ? N/threadsPerBlock : (N/threadsPerBlock)+1;
 	
 	gpu_mat_mul <<< numBlocks, threadsPerBlock >>> (A_d, B_d, C_d, N);
-	
 	cudaDeviceSynchronize();
-
+	
+	err = cudaGetLastError();
+	if (err != cudaSuccess) 
+		printf("Error: %s\n", cudaGetErrorString(err));
+	PRINTLINEMACRO
 	cudaMemcpy(C_h, C_d, bytes, cudaMemcpyDeviceToHost);
 	
 	cudaFree(C_d);
 	cudaFree(B_d);
 	cudaFree(A_d);
 	
+	err = cudaGetLastError();
+	if (err != cudaSuccess) 
+		printf("Error: %s\n", cudaGetErrorString(err));
+	PRINTLINEMACRO
 	free(C_h);
 	
 	auto end = chrono::high_resolution_clock::now();

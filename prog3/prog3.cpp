@@ -46,9 +46,9 @@ int main(int argc, char* argv[]){
 	free(A); free(B); free(C);
 	
 	auto end = chrono::high_resolution_clock::now();
-	auto duration = chrono::duration_cast<chrono::microseconds>(end - begin);
+	auto duration = chrono::duration_cast<chrono::milliseconds>(end - begin);
 	cout << "Number of threads: " << setw(2) << threads << " Matrix size: " << setw(9) << N;
-	cout << " Microseconds taken: " << setw(15) << duration.count() << endl;
+	cout << " Milliseconds taken: " << setw(15) << duration.count() << endl;
 	return 0;	
 }
 
