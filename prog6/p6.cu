@@ -14,15 +14,14 @@ using namespace std;
 	printf("%d in %s\n", __LINE__, __FILE__); \
 }
 
-__global__ void gpu_mat_mul(float* A, float* B, float* C, long N)
+__global__ void gpu_mat_mul(float* A, float* B, float* C, long width, long N)
 {
-  long i = blockIdx.x * blockDim.x + threadIdx.x;
-  if(i >= N) return;
+  const long i = (blockIdx.x * blockDim.x + threadIdx.x) % N;
   float val = 0.0;
-  float* a = A + (i / N);
-  float* b = B + (i % N);
+  float* a = A + (i / width);
+  float* b = B + (i % width);
   for(long j = 0; j < N; j++){
-  	val += *(a + j) * *(b + (N*j));
+  	val += *(a + j) * *(b + (width*j));
   }
   *(C + i) = val;
 }
@@ -67,7 +66,7 @@ int main(int argc, char **argv){
 	long threadsPerBlock = 16;
 	long numBlocks = (N % threadsPerBlock == 0) ? N/threadsPerBlock : (N/threadsPerBlock)+1;
 	
-	gpu_mat_mul <<< numBlocks, threadsPerBlock >>> (A_d, B_d, C_d, N);
+	gpu_mat_mul <<< numBlocks, threadsPerBlock >>> (A_d, B_d, C_d, size, N);
 	cudaDeviceSynchronize();
 	
 	err = cudaGetLastError();
