@@ -6,7 +6,6 @@
 #include <chrono>
 #include <iostream>
 #include <iomanip>
-#include <climits>
 
 using namespace std;
 
@@ -20,7 +19,8 @@ using namespace std;
 
 __global__ void gpu_mat_mul(float* A, float* B, float* C, long width, long N)
 {
-  const long i = (blockIdx.x * blockDim.x + threadIdx.x) % N;
+  const long i = (blockIdx.x * blockDim.x + threadIdx.x);
+  if(i >= N) return;
   float val = 0.0;
   float* a = A + (i / width);
   float* b = B + (i % width);
@@ -33,7 +33,7 @@ __global__ void gpu_mat_mul(float* A, float* B, float* C, long width, long N)
 int main(int argc, char **argv){
 	auto begin = chrono::high_resolution_clock::now();
 	if(argc < 2){
-		printf("usage: ./%s <Size> \n", argv[0]);
+		printf("usage: ./%s <size> \n", argv[0]);
 		return 1;
 	}
     
@@ -45,8 +45,10 @@ int main(int argc, char **argv){
    	float* B_h = (float*)malloc(bytes);
    	float* C_h = (float*)malloc(bytes);
    	
-   	memset(A_h, 1.0, bytes);
-   	memset(B_h, 1.0, bytes);
+   	for(long i = 0; i < N; i++){
+   		*(A_h + i) = (float)i / (float)N;
+   		*(B_h + i) = (float)i / (float)N;
+   	}
    	
 	float *A_d, *B_d, *C_d;
 	cudaMalloc((void**)&A_d, bytes);
@@ -65,8 +67,9 @@ int main(int argc, char **argv){
 	free(A_h);
 	free(B_h);
 	
-	long threadsPerBlock = 16;
-	long numBlocks = N/threadsPerBlock + (N % threadsPerBlock > 0) ?  1 : 0;
+	long threadsPerBlock = 1024;
+	long numBlocks = N / threadsPerBlock;
+	numBlocks += (N % threadsPerBlock > 0) ?  1 : 0;
 	
 	gpu_mat_mul <<< numBlocks, threadsPerBlock >>> (A_d, B_d, C_d, size, N);
 	cudaDeviceSynchronize();
@@ -85,7 +88,7 @@ int main(int argc, char **argv){
 	
 	auto end = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::milliseconds>(end - begin);
-	cout << "Number of threads: " << setw(2) << threadsPerBlock * numBlocks << " Matrix size: " << setw(9) << size;
+	cout << "Blocksize * Gridsize: " << setw(2) << threadsPerBlock * numBlocks << " Matrix size: " << setw(9) << size;
 	cout << " Milliseconds taken: " << setw(15) << duration.count() << endl;
 	return 0;
 }
