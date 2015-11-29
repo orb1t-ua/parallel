@@ -20,7 +20,7 @@ __global__ void gpu_mat_mul(float* A, float* B, float* C, long width, long N)
   float val = 0.0;
   float* a = A + (i / width);
   float* b = B + (i % width);
-  for(long j = 0; j < N; j++){
+  for(long j = 0; j < width; j++){
   	val += *(a + j) * *(b + (width*j));
   }
   *(C + i) = val;
@@ -52,14 +52,14 @@ int main(int argc, char **argv){
 	cudaError_t err = cudaGetLastError();
 	if (err != cudaSuccess) 
 		printf("Error: %s\n", cudaGetErrorString(err));
-	PRINTLINEMACRO
+	
 	cudaMemcpy(A_d, A_h, bytes, cudaMemcpyHostToDevice);
 	cudaMemcpy(B_d, B_h, bytes, cudaMemcpyHostToDevice);
 	
 	err = cudaGetLastError();
 	if (err != cudaSuccess) 
 		printf("Error: %s\n", cudaGetErrorString(err));
-	PRINTLINEMACRO
+	
 	free(A_h);
 	free(B_h);
 	
@@ -72,7 +72,7 @@ int main(int argc, char **argv){
 	err = cudaGetLastError();
 	if (err != cudaSuccess) 
 		printf("Error: %s\n", cudaGetErrorString(err));
-	PRINTLINEMACRO
+	
 	cudaMemcpy(C_h, C_d, bytes, cudaMemcpyDeviceToHost);
 	
 	cudaFree(C_d);
@@ -82,7 +82,7 @@ int main(int argc, char **argv){
 	err = cudaGetLastError();
 	if (err != cudaSuccess) 
 		printf("Error: %s\n", cudaGetErrorString(err));
-	PRINTLINEMACRO
+	
 	free(C_h);
 	
 	auto end = chrono::high_resolution_clock::now();
