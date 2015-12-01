@@ -1,0 +1,10 @@
+Number of threads:  1 Matrix size:      5000 Milliseconds taken:          281119
+Number of threads:  1 Matrix size:      5000 Milliseconds taken:          281085
+Number of threads:  1 Matrix size:      5000 Milliseconds taken:          280907
+Number of threads:  1 Matrix size:      5000 Milliseconds taken:          280858
+Number of threads:  1 Matrix size:      5000 Milliseconds taken:          281038
+Number of threads:  1 Matrix size:      5000 Milliseconds taken:          280813
+Number of threads:  1 Matrix size:      5000 Milliseconds taken:          280991
+Number of threads:  1 Matrix size:      5000 Milliseconds taken:          280693
+Number of threads:  1 Matrix size:      5000 Milliseconds taken:          280899
+Number of threads:  1 Matrix size:      5000 Milliseconds taken:          280680

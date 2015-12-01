@@ -1,0 +1,10 @@
+Number of threads:  4 Matrix size:      5000 Milliseconds taken:          125590
+Number of threads:  4 Matrix size:      5000 Milliseconds taken:          123686
+Number of threads:  4 Matrix size:      5000 Milliseconds taken:          125540
+Number of threads:  4 Matrix size:      5000 Milliseconds taken:          125535
+Number of threads:  4 Matrix size:      5000 Milliseconds taken:          125583
+Number of threads:  4 Matrix size:      5000 Milliseconds taken:          125562
+Number of threads:  4 Matrix size:      5000 Milliseconds taken:          124950
+Number of threads:  4 Matrix size:      5000 Milliseconds taken:          125587
+Number of threads:  4 Matrix size:      5000 Milliseconds taken:          125522
+Number of threads:  4 Matrix size:      5000 Milliseconds taken:          125609
